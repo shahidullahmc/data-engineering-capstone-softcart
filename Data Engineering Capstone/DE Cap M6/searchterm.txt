@@ -1,0 +1,103 @@
+search_data.createOrReplaceTempView("search_data")
+
+spark.sql("""
+    SELECT lower(searchterm) AS searchterm, COUNT(*) AS frequency
+    FROM search_data
+    GROUP BY lower(searchterm)
+    ORDER BY frequency DESC
+    LIMIT 5
+""").show()
+
+Output:
++-------------+---------+
+|   searchterm|frequency|
++-------------+---------+
+|mobile 6 inch|     2312|
+|    mobile 5g|     2301|
+|mobile latest|     1327|
+|       laptop|      935|
+|  tablet wifi|      896|
++-------------+---------+
+
+======================================================
+
+# Load the sales forecast model.
+# The -x extracts, -v is verbose, -z is for gunzip, -f specifies the file
+!tar -xvzf model.tar.gz
+
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.regression import LinearRegressionModel
+
+# Load the model using the folder name shown in your image
+model = LinearRegressionModel.load('sales_prediction.model')
+
+# Verify it loaded by printing the model type
+print(model)
+
+=========================================================
+def predict_sales_2023():
+    assembler = VectorAssembler(inputCols=["year"], outputCol="features")
+    df = spark.createDataFrame([[2023]], ["year"])
+    df2 = assembler.transform(df)
+    feature_vector = df2.select("features").first().features
+    prediction_value = model.predict(feature_vector)
+    print("Predicted sales for 2023:", prediction_value)
+    return prediction_value
+
+predict_sales_2023()
+
+=========================================================
+def predict_sales_2023():
+    # Assemble the feature vector manually
+    assembler = VectorAssembler(inputCols=["year"], outputCol="features")
+    
+    # Create a DataFrame for 2023
+    df = spark.createDataFrame([[2023]], ["year"])
+    df2 = assembler.transform(df)
+    
+    # Extract the feature vector
+    feature_vector = df2.select("features").first().features
+    
+    # Use the model's predict() method (this is what the grader wants)
+    prediction_value = model.predict(feature_vector)
+    
+    print("Predicted sales for 2023:", prediction_value)
+    return prediction_value
+
+# Test it
+predict_sales_2023()
+
+
+Output:
++------------------+
+|        prediction|
++------------------+
+|175.16564294006457|
++------------------+
+
+========================================================
+
+========================================================
+def predict(target_year):
+    # Create a DataFrame with the input year
+    df = spark.createDataFrame([[target_year]], ["year"])
+    
+    # Assemble features
+    assembler = VectorAssembler(inputCols=["year"], outputCol="features")
+    df2 = assembler.transform(df)
+    
+    # Extract the feature vector
+    feature_vector = df2.select("features").first().features
+    
+    # Use the model's predict() method (required by the grader)
+    prediction_value = model.predict(feature_vector)
+    
+    print("Predicted sales for", target_year, ":", prediction_value)
+    return prediction_value
+
+# Test it
+predict(2023)
+
+
+
+

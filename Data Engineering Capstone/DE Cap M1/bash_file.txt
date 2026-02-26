@@ -1,0 +1,28 @@
+#!/bin/bash
+mysqldump -u root -p sales sales_data > sales_data.sql
+
+To create file
+==========================================
+nano datadump.sh
+============================================
+#!/bin/bash
+mysqldump -u root -p sales sales_data > sales_data.sql
+
+=========================================
+Press CTRL + O → save
+
+Press ENTER → confirm
+
+Press CTRL + X → exit
+=========================================
+To make executable
+
+chmod +x datadump.sh
+======================================
+To run the script in the file
+./datadump.sh
+Then password given
+===============================
+To check for confirmation
+ls -l
+==================

@@ -1,0 +1,194 @@
+You need the ‘mongoimport’ and ‘mongoexport’ tools to move data in and out of the mongodb database.
+
+To install these tools run the below commands on the terminal.
+
+wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu1804-x86_64-100.3.1.tgz
+tar -xf mongodb-database-tools-ubuntu1804-x86_64-100.3.1.tgz
+export PATH=$PATH:/home/project/mongodb-database-tools-ubuntu1804-x86_64-100.3.1/bin
+echo "done"
+=======================================================================================================
+Verify that the tools got installed, by running the below command on the terminal.
+mongoimport --version
+
+=======================================================================================================
+MongoDB import/export data
+Example:
+Import data in ‘diamonds.json’ into a collection named ‘diamonds’ and a database named ‘training’, replacing the password
+(the characters following -p: MzA2NDAtcnNhbm5h) with your own password.
+
+mongoimport -u root -p MzA2NDAtcnNhbm5h --authenticationDatabase admin --db training --collection diamonds --file diamonds.json --host mongo
+
+Do for "Import the catalog.json file into MongoDB, using catalog as the database and electronics as the collection"
+
+mongoimport -u root -p 9iw0cOQs71NJpeIPOgaya0Rz --authenticationDatabase admin --db catalog --collection electronics --file catalog.json --host mongo
+
+mongoimport --db electronics --collection electronics --file electronics.json --jsonArray
+
+-----------------------------------------------------------------------------------------------
+mongosh --host mongo -u root -p 9iw0cOQs71NJpeIPOgaya0Rz --authenticationDatabase admin
+mongosh --host mongo -u root -p 9iw0cOQs71NJpeIPOgaya0Rz --authenticationDatabase admin
+mongosh --host mongo -u root -p 9iw0cOQs71NJpeIPOgaya0Rz --authenticationDatabase admin
+
+
+=========================================================================================================
+Task 3 - List all collections in the catalog database
+List out all the collections present in the MongoDB database named catalog.
+
+test> show dbs
+admin    100.00 KiB
+catalog   48.00 KiB
+config    60.00 KiB
+local     72.00 KiB
+test> use catalog
+switched to db catalog
+catalog> show collections
+electronics
+catalog> 
+=========================================================================================================
+Task 4 - Create an index on the type field
+Create an index on the type field in the electronics collection of the catalog database.
+
+db.electronics.createIndex({ type: 1 })
+---------
+Verify
+db.electronics.getIndexes()
+-----------
+
+OUTPUT:
+test> use catalog
+switched to db catalog
+catalog> db.electronics.createIndex({type:1})
+type_1
+catalog> db.electronics.getIndexs()
+TypeError: db.electronics.getIndexs is not a function
+catalog> db.electronics.getIndexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { type: 1 }, name: 'type_1' }
+]
+catalog> 
+----------------------------------------------------------------------
+Depends on type:
+So run the query
+db.electronics.distinct("type")
+-----------------------------------------------------------------------------
+[
+
+show dbs
+use catalog
+show collections
+db.electronics.find().limit(5)
+
+
+db.electronics.find().limit(5)
+db.electronics.countDocuments({ type: "laptop" })
+db.electronics.countDocuments({ type: "mobile", screen_size: 6 })
+Calculate the average screen size of smartphones:
+db.electronics.aggregate([
+  { $match: { type: "mobile" } },
+  { $group: { _id: null, avgScreen: { $avg: "$screen_size" } } }
+])
+
+db.electronics.aggregate([
+  { $match: { type: "smart phone" } },
+  { $group: { _id: null, avgScreenSize: { $avg: "$screen size" } } }
+])
+Group by brand
+{ $group: { _id: "$brand", avgScreenSize: { $avg: "$screen size" } } }
+Group by type
+{ $group: { _id: "$type", count: { $sum: 1 } } }
+Everything together
+{ $group: { _id: null, avgScreenSize: { $avg: "$screen size" } } }
+
+mongoexport \
+  --db catalog \
+  --collection electronics \
+  --type=csv \
+  --fields=_id,type,model \
+  --out electronics_export.csv
+
+mongoexport \
+  --db catalog \
+  --collection electronics \
+  --type=csv \
+  --fields=_id,type,model \
+  --out electronics_export.csv \
+  --host mongo \
+  -u root -p 9iw0cOQs71NJpeIPOgaya0Rz \
+  --authenticationDatabase admin
+
+mongoexport \
+  --db=catalog \
+  --collection=electronics \
+  --type=csv \
+  --fields=_id,type,model \
+  --out=electronics.csv \
+  --host=mongo \
+  -u root -p 9iw0cOQs71NJpeIPOgaya0Rz \
+  --authenticationDatabase=admin
+
+Standard:
+mongoexport \
+  --db=catalog \
+  --collection=electronics \
+  --type=csv \
+  --fields=_id,type,model \
+  --out=electronics.csv \
+  --host=mongo \
+  -u root -p 9iw0cOQs71NJpeIPOgaya0Rz \
+  --authenticationDatabase=admin
+
+
+
+]
+--------------------------------------------------------------------------
+Task 5 -Find the count of laptops
+Write a query to count documents with type equal to laptop in the electronics collection.
+catalog> db.electronics.countDocuments({type: "laptop"})
+389
+catalog> 
+==========================================================================================
+Task 6 - Count smart phones with 6-inch screen size
+Write a query to find the number of smart phones with screen size of 6 inches
+catalog> db.electronics.distinct("type")
+... 
+[ 'laptop', 'smart phone', 'television' ]
+catalog> db.electronics.countDocuments({ type: "smart phone", "screen size": 6 }) 
+... 
+8
+catalog> 
+==========================================================================================
+Task 7 - Find average screen size of smart phones
+Write a query to find out the average screen size of smart phones.
+
+Save the command you executed and its output in a text document, or 
+take a screenshot showing both the command and its output for future reference.
+
+catalog> db.electronics.aggregate([
+...   { $match: { type: "smart phone" } },
+...   { $group: { _id: null, avgScreenSize: { $avg: "$screen size" } } }
+... ])
+... 
+[ { _id: null, avgScreenSize: 6 } ]
+catalog> 
+=============================================================================================
+Task 8 - Export selected fields to a CSV file
+Export the fields _id, type, model, from the electronics collection 
+into a file named electronics.csv
+catalog> exit
+theia@theiaopenshift-u9999911:/home/project$ mongoexport \
+  --db=catalog \
+  --collection=electronics \
+  --type=csv \
+  --fields=_id,type,model \
+  --out=electronics.csv \
+  --host=mongo \
+  -u root -p 9iw0cOQs71NJpeIPOgaya0Rz \
+  --authenticationDatabase=admin
+2026-02-23T05:18:12.865-0500    connected to: mongodb://mongo/
+2026-02-23T05:18:12.876-0500    exported 438 records
+theia@theiaopenshift-u9999911:/home/project$ 
+=========================================================================
+Verifying:
+theia@theiaopenshift-u9999911:/home/project$ ls -l electronics.csv
+-rw-r--r-- 1 theia users 20316 Feb 23 05:18 electronics.csv

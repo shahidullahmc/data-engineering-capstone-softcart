@@ -1,0 +1,80 @@
+CREATE TABLE sales_data (
+    product_id INT,
+    customer_id INT,
+    price INT,
+    quantity INT,
+    timestamp DATETIME
+);
+
+USE sales;
+
+CREATE TABLE sales_data (
+    product_id INT,
+    customer_id INT,
+    price INT,
+    quantity INT,
+    timestamp DATETIME
+);
+
+-- Output:
+Query OK, 0 rows affected
+
+=========================================
+mysql> CREATE TABLE sales_data (
+    ->     product_id INT,
+    ->     customer_id INT,
+    ->     price INT,
+    ->     quantity INT,
+    ->     timestamp DATETIME
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+=========================================
+--------
+To upload from same working directory
+LOAD DATA LOCAL INFILE 'oltpdata.csv'
+INTO TABLE sales_data
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
+------------------------
+To enable loal infile
+mysql --local-infile=1 -u root -p
+
+=========================================
+Task3
+--------------
+mysql> select count(*) from sales_data;
++----------+
+| count(*) |
++----------+
+|     2605 |
++----------+
+1 row in set (0.00 sec)
+==============================================
+Task4
+--------------
+mysql> select count(*) from sales_data;
++----------+
+| count(*) |
++----------+
+|     2605 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> CREATE INDEX ts ON sales_data(timestamp);
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+================================================
+Task5
+-------------
+mysql> SHOW INDEXES FROM sales_data;
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| Table      | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| sales_data |          1 | ts       |            1 | timestamp   | A         |        2605 |     NULL |   NULL | YES  | BTREE      |         |               | YES     | NULL       |
++------------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+1 row in set (0.00 sec)
+================================================
+Task6
+--------
+
